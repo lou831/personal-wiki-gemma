@@ -4,6 +4,7 @@ Everything the human browses lives in vault/. Everything only the machine
 needs (chunks, embeddings, manifest, backups) lives in .wiki/, outside the vault.
 """
 
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -23,7 +24,9 @@ CORRECTIONS_FILE = ROOT / "review" / "corrections.yaml"   # reviewer fixes, appl
 OUTPUTS = ROOT / "outputs"             # saved answers, chat transcripts, logs, test reports
 
 # --- Models (local only) ----------------------------------------------------
-LLM_ID = "mlx-community/gemma-4-e4b-it-4bit"   # Gemma 4 E4B, 4-bit MLX weights (~5.1 GB)
+# Gemma 4 E4B, 4-bit MLX weights (~5.1 GB). WIKI_MODEL overrides it for the model
+# comparison run (e.g. WIKI_MODEL=mlx-community/gemma-4-e2b-it-4bit ./wiki test).
+LLM_ID = os.environ.get("WIKI_MODEL", "mlx-community/gemma-4-e4b-it-4bit")
 EMBED_ID = "BAAI/bge-small-en-v1.5"            # 33M-param sentence embedder (~130 MB)
 EMBED_QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 

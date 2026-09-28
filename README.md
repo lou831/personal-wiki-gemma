@@ -123,8 +123,7 @@ lists every source note with its original file.
 ### Why E4B at 4-bit
 
 - **E2B** (~2B effective parameters): about 2.9 GB to load at Q4_0 (3.3 GB for the
-  MLX 4-bit file I had from Class 4). Fastest, but weakest at following grounding and
-  citation rules.
+  MLX 4-bit file I had from Class 4). **Tested; see the comparison below.**
 - **E4B** (~4B effective, plus per-layer embedding tables): about 4.5 GB at Q4_0. Here
   it measures **5.15 GB peak MLX memory, 4.2 GB resident**. That leaves room for the
   OS, the embedder and my other apps on a 16 GB Mac, and in testing it followed
@@ -135,8 +134,22 @@ lists every source note with its original file.
   available in practice. It does not fit. Active parameters set the speed; total
   parameters set the memory.
 
-E4B is the smallest model that did the job on my wiki. I didn't need to test all
-three sizes.
+**Measured comparison on my wiki** (same harness, same 17 checks; the E2B run was
+online and is labelled so it can't be confused with the offline evidence):
+
+| | E2B 4-bit ([run](<outputs/runs/2026-09-27 1738 Model Comparison E2B (online)/Test Report.md>)) | E4B 4-bit ([offline run](<outputs/runs/2026-09-27 1712 Offline Run/Test Report.md>)) |
+|---|---|---|
+| Checks passed | **15/17** | **17/17** |
+| MLX peak memory | 3.34 GB | 4.95 GB |
+| Ask time / speed | 4.0–5.3 s, ~30 tok/s | 9.3–11.9 s, ~19 tok/s |
+| Test 2 (paraphrase) | ❌ Content right ("17 graduated… 17 new"), but cited as `[1, 2]`, a format my citation check doesn't accept, so the answer was withheld | ✅ |
+| Chat about notes | ❌ Used the notes but gave no `[n]` citations | ✅ |
+
+E2B is faster and about 1.6 GB smaller, but it broke citation discipline twice, and
+that discipline is the point of ask and of note-based chat. E4B is the smallest size
+that passed everything on my wiki, and it fits the 16 GB Mac with room left.
+E4B is **chosen**. (The `[1, 2]` case is also a harness limitation; see the
+reflection.)
 
 ### Measured memory and response time (my wiki, this Mac)
 
@@ -160,11 +173,11 @@ test reports repeat them.
 
 | Piece | Where | What it is |
 |---|---|---|
-| **Model** | `harness/llm.py` | Gemma 4 E4B via mlx-lm. It generates text only from the messages the harness gives it: it reads no files, remembers nothing between calls, and runs no tools. `llm.py` applies Gemma's chat template (thinking disabled), streams tokens, strips leaked reasoning blocks, and records tokens/s and peak memory. |
-| **Retrieval tool** | `harness/retrieval.py` | Query → ranked **original passages** with note path, original file and page. BM25 (exact words, numbers, acronyms) + bge-small cosine similarity (paraphrases), merged with reciprocal-rank fusion. It generates nothing. `wiki search` shows its results directly. |
-| **RAG workflow** | `harness/rag.py` | Used by ask: retrieve 6 passages → gate (refuse if no passage has cosine ≥ 0.55) → add same-page neighbors of the top 3 → prompt = research rules + numbered passages → Gemma → **citation check** (every `[n]` must map to a supplied passage; no valid citation means the answer is withheld as insufficient). RAG adds context at answer time; it does not train the model. |
-| **Harness** | `harness/core.py`, `harness/chat.py`, `harness/ingest.py`, `harness/vault.py`, `harness/linker.py`, `harness/offline.py` | Chooses the mode; loads that mode's instruction file; decides the context (chat history only in chat, evidence only in ask); decides when retrieval runs; builds prompts; calls Gemma; checks and renders citations; handles errors; saves outputs and metrics; enforces local-only networking. |
-| **CLI** | `wiki`, `wiki_cli.py` | The terminal interface: argparse commands, printing, the interactive chat loop and its slash commands. |
+| **Model** | [`harness/llm.py`](harness/llm.py) | Gemma 4 E4B via mlx-lm. It generates text only from the messages the harness gives it: it reads no files, remembers nothing between calls, and runs no tools. `llm.py` applies Gemma's chat template (thinking disabled), streams tokens, strips leaked reasoning blocks, and records tokens/s and peak memory. |
+| **Retrieval tool** | [`harness/retrieval.py`](harness/retrieval.py) | Query → ranked **original passages** with note path, original file and page. BM25 (exact words, numbers, acronyms) + bge-small cosine similarity (paraphrases), merged with reciprocal-rank fusion. It generates nothing. `wiki search` shows its results directly. |
+| **RAG workflow** | [`harness/rag.py`](harness/rag.py) | Used by ask: retrieve 6 passages → gate (refuse if no passage has cosine ≥ 0.55) → add same-page neighbors of the top 3 → prompt = research rules + numbered passages → Gemma → **citation check** (every `[n]` must map to a supplied passage; no valid citation means the answer is withheld as insufficient). RAG adds context at answer time; it does not train the model. |
+| **Harness** | [`core.py`](harness/core.py), [`chat.py`](harness/chat.py), [`ingest.py`](harness/ingest.py), [`vault.py`](harness/vault.py), [`linker.py`](harness/linker.py), [`offline.py`](harness/offline.py), [`config.py`](harness/config.py); prompts in [`prompts/`](prompts/) | Chooses the mode; loads that mode's instruction file; decides the context (chat history only in chat, evidence only in ask); decides when retrieval runs; builds prompts; calls Gemma; checks and renders citations; handles errors; saves outputs and metrics; enforces local-only networking. |
+| **CLI** | [`wiki`](wiki), [`wiki_cli.py`](wiki_cli.py) | The terminal interface: argparse commands, printing, the interactive chat loop and its slash commands. |
 
 ### One command traced through the code: `./wiki ask "…" --mode local`
 
@@ -213,6 +226,9 @@ test reports repeat them.
 **Errors:** a missing file, unsupported type, scanned PDF (no text), unavailable
 model (with the `hf download` hint), invalid note name, name clash, or a corrupted
 index each end in a one-line `error: …` message and a non-zero exit code.
+Recorded evidence: [Error Handling Checks](<outputs/runs/2026-09-27 1739 Error Handling Checks/Terminal Log.txt>) (missing file, unsupported type,
+empty folder, `--mode online`, a model that isn't downloaded, a bad note name, an
+unknown command).
 
 ---
 
@@ -327,6 +343,26 @@ index (`.wiki/`), reviewer corrections (`review/`), tests, answers and logs.
 
 `./wiki check` verifies that every internal link and source reference resolves.
 
+### Cleanup of the existing vault (backup → rename/restructure → rebuild → rerun)
+
+1. **Rename (2026-09-26):** the model named the rail note *Rail Modernization Program
+   Strategy*. `wiki rename` backed up every file it touched, renamed the note to
+   *WMATA Rail Modernization Program*, rewrote incoming links, updated all 93 retrieval
+   passages' paths and rebuilt `index.md`. The source ID `src-10614dc760a7` stayed
+   the same.
+2. **Restructure (2026-09-27):** after a full backup, the vault moved to the required
+   `raw/` + `wiki/<topic>/` layout. Properties, links, retrieval paths and the index
+   were rebuilt (`wiki reindex`), and the syllabus moved from *General* to
+   *Coursework*.
+3. **Rerun:** the question tests were rerun after each change: the 1631, 1636 and
+   1649 online runs, then the final offline run.
+4. **Re-ingest check:** re-ingesting every source returns `already ingested` with no
+   new notes or passages. A forced re-draft kept the reviewed names. A rename made
+   by hand in Obsidian was adopted on re-ingest, not reverted.
+
+The backups are kept locally in `.wiki/backups/` and aren't published, because they
+duplicate the PDFs and contain paths from before redaction.
+
 ---
 
 ## Evidence
@@ -340,6 +376,8 @@ Folder: [`outputs/runs/2026-09-27 1712 Offline Run/`](<outputs/runs/2026-09-27 1
 - [Terminal Log](<outputs/runs/2026-09-27 1712 Offline Run/Terminal Log.txt>)
 - [Test Report](<outputs/runs/2026-09-27 1712 Offline Run/Test Report.md>)
 - [Mode Checks](<outputs/runs/2026-09-27 1712 Offline Run/Mode Checks.md>)
+- [Reviewer Assessment](<outputs/runs/2026-09-27 1712 Offline Run/Reviewer Assessment.md>):
+  my per-test check of every citation against the original page
 - Evidence cards:
   [Test 1](<outputs/runs/2026-09-27 1712 Offline Run/Test 1 - Rail Capacity.md>) ·
   [Test 2](<outputs/runs/2026-09-27 1712 Offline Run/Test 2 - PG&E Problem Statements.md>) ·
@@ -464,6 +502,9 @@ Each run also writes `Mode Checks.md` with the full transcript:
 | [2026-09-27 1631 Online Run](<outputs/runs/2026-09-27 1631 Online Run (Test 2 false pass)/Test 2 - PG&E Problem Statements.md>) | 17/17, but one was wrong | **False pass on Test 2** (see the reflection). |
 | [2026-09-27 1636 Online Run](<outputs/runs/2026-09-27 1636 Online Run (chat tool-use failure)/Mode Checks.md>) | 16/17 | Chat notes-tool failure: a leaked reasoning block. |
 | [2026-09-27 1649 Online Run](<outputs/runs/2026-09-27 1649 Online Run/Test Report.md>) | 17/17 | After the fixes, online. |
+| **2026-09-27 1712 Offline Run** (above) | **17/17** | **The required offline evidence.** |
+| [2026-09-27 1738 Model Comparison E2B](<outputs/runs/2026-09-27 1738 Model Comparison E2B (online)/Test Report.md>) | 15/17 | Same suite with Gemma 4 E2B (online, labelled as a comparison). It justifies the model choice. |
+| [2026-09-27 1739 Error Handling Checks](<outputs/runs/2026-09-27 1739 Error Handling Checks/Terminal Log.txt>) | all errors clear | Useful errors for missing files, an unavailable model, and other bad input. |
 
 Before publishing, I replaced absolute local paths in the two earlier logs with
 project-relative or `~/` paths. That was the only edit to evidence files; the code
@@ -513,6 +554,13 @@ model still decides for implicit cases.
 
 All are corrected in `review/corrections.yaml` with reasons. The model's
 concept-link reasons were also weak: 3 of 4 proposed links were rejected or rewritten.
+
+**4. Smaller model, weaker citation discipline (E2B comparison).** With E2B,
+Test 2's content was right but was cited as `[1, 2]`. My citation check accepts only
+`[1]`/`[1][2]`, so it withheld a correct answer. E2B also answered a notes question
+in chat without citing. The first is partly a harness limitation: the parser should
+also accept comma lists. I left it unchanged so that the offline evidence matches
+the published code.
 
 **Improvement I would try next:** replace neighbor expansion with a small local
 cross-encoder reranker over the top ~20 passages, plus page-level context windows.

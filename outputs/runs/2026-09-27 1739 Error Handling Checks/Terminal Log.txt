@@ -1,0 +1,38 @@
+=== Error handling checks Sun Sep 27 17:39:57 PDT 2026 (each command is a fresh CLI process)
+
+$ ./wiki ingest ~/Downloads/does-not-exist.pdf
+[ingest · local · mlx-community/gemma-4-e4b-it-4bit]
+Ingesting ~/Downloads/does-not-exist.pdf …
+  error: File not found: ~/Downloads/does-not-exist.pdf
+(exit code: 1)
+
+$ ./wiki ingest harness/llm.py
+[ingest · local · mlx-community/gemma-4-e4b-it-4bit]
+Ingesting harness/llm.py …
+  error: Unsupported file type .py. Supported: .md, .pdf, .txt
+(exit code: 1)
+
+$ ./wiki ingest ./tests/empty-folder-for-demo
+error: No supported files (.md, .pdf, .txt) in tests/empty-folder-for-demo
+[ingest · local · mlx-community/gemma-4-e4b-it-4bit]
+(exit code: 1)
+
+$ ./wiki ask "Where is the workshop?" --mode online
+error: online mode is not configured in this project; local is the only mode.
+(exit code: 2)
+
+$ WIKI_MODEL=mlx-community/gemma-4-not-downloaded ./wiki ask "How many trains per hour could automation allow?"
+[ask · local · mlx-community/gemma-4-not-downloaded · standalone, no chat history]  “How many trains per hour could automation allow?”
+
+error: The local model mlx-community/gemma-4-not-downloaded is not available (LocalEntryNotFoundError: Cannot find an appropriate cached snapshot folder for the specified revision on the local disk and outgoing traffic has been disabled. To enable repo look-ups and downloads online, set 'HF_HUB_OFFLINE=0' as environment variable.). While online, download it once with:  hf download mlx-community/gemma-4-not-downloaded
+(exit code: 1)
+
+$ ./wiki rename "Platform Screen Doors" "a82f9c1e0b Export Final"
+error: 'Export Final' is not a good note name: names an export/download task
+(exit code: 1)
+
+$ ./wiki bogus-command
+usage: wiki
+            {help,chat,ask,search,ingest,check,rename,reindex,link,stats,test} ...
+wiki: error: argument cmd: invalid choice: 'bogus-command' (choose from 'help', 'chat', 'ask', 'search', 'ingest', 'check', 'rename', 'reindex', 'link', 'stats', 'test')
+(exit code: 2)

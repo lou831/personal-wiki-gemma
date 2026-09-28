@@ -46,7 +46,8 @@ def network_status() -> str:
 
 
 def runtime_line() -> str:
-    return (f"`{config.LLM_ID}` (Gemma 4 E4B, 4-bit MLX) via mlx-lm {version('mlx-lm')} / mlx {version('mlx')}; "
+    size = "E2B" if "e2b" in config.LLM_ID else "E4B" if "e4b" in config.LLM_ID else "?"
+    return (f"`{config.LLM_ID}` (Gemma 4 {size}, 4-bit MLX) via mlx-lm {version('mlx-lm')} / mlx {version('mlx')}; "
             f"embeddings `{config.EMBED_ID}` via sentence-transformers {version('sentence-transformers')}")
 
 
