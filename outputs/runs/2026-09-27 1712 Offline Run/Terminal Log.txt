@@ -1,0 +1,213 @@
+=== Offline run Sun Sep 27 17:12:58 PDT 2026 ===
+--- OS network check
+Wi-Fi Power (en0): Off
+note: a default route is still present
+offline confirmed: huggingface.co, google.com and pypi.org are all unreachable
+device: Apple M4, 16 GB unified memory, macOS 26.6.2
+
+=== 1. help (fresh CLI process)
+
+$ ./wiki --help
+wiki — personal wiki on a local Gemma model (fully offline)
+
+MODES
+  chat                Talk with Wren, your assistant. Keeps conversation context,
+                      handles casual questions and drafting, and looks in your notes
+                      only when the question is about them.
+                        in chat:  /ask <q>     standalone cited answer (chat history not used)
+                                  /search <q>  raw passages
+                                  /notes <q>   force a notes lookup inside the chat
+                                  /reset  /save  /help  /exit
+  ask "<question>" [--mode local]
+                      One standalone, neutral, factual answer from retrieved evidence,
+                      with citations — or an insufficient-evidence response.
+                      Never uses chat history or the assistant persona.
+                      Saved to outputs/answers/. Add --no-save to skip saving.
+  search "<query>" [-k N]
+                      Original passages with note and file paths. No model, no answer.
+  ingest <file|folder...> [--force]
+                      Add PDF/Markdown/text sources (e.g. `wiki ingest ./vault/raw`).
+                      Copies each original (read-only) to vault/raw/, has local Gemma
+                      draft a source note + concept notes in vault/wiki/, indexes
+                      passages, links related concepts, rebuilds vault/index.md.
+                      The same file again = "already ingested" (content hash), never a
+                      duplicate. --force re-drafts it but keeps the note's name.
+  help, --help        This text.
+
+MAINTENANCE
+  check               Lint the vault: names, H1s, links, originals, index, duplicates.
+  rename "<old>" "<new>"   Rename a note; backs up, fixes links and retrieval paths.
+  reindex             Rebuild passages/embeddings from vault/raw/ and re-render notes
+                      with reviewer corrections (no model call).
+  link                Re-run the cross-source concept linker (one model call).
+  stats               Sources, notes, passages, memory, blocked network attempts.
+  test                Run the assignment test suite and write a report.
+
+CONFIGURATION (harness/config.py)
+  mode        local (the only mode; no online mode is configured)
+  model       mlx-community/gemma-4-e4b-it-4bit  (MLX, 4-bit)
+  embeddings  BAAI/bge-small-en-v1.5
+  vault       vault/  (raw/ originals, wiki/ notes, index.md)   prompts: prompts/
+  reviewer corrections: review/corrections.yaml   machine index: .wiki/
+
+REQUIRED INPUTS
+  The model and embedding weights must already be in the local Hugging Face cache
+  (downloaded once while online; see README). Networking is blocked in-process;
+  there is no cloud fallback.
+
+
+=== 2. stats before ingest
+
+$ ./wiki stats
+sources:  3
+  - Transportation/WMATA Rail Modernization Program  (73 pages, from raw/3A-Rail-Modernization-Program.pdf)
+  - Energy and Utilities/PG&E 2024 R&D Strategy Report  (21 pages, from raw/pge-rd-strategy-report-executive-summary-2024.pdf)
+  - Coursework/Business of Energy Transition Syllabus  (14 pages, from raw/Business of Energy Transition Syllabus Fall 2026.pdf)
+concepts: 11
+notes:    14 (+ index.md)
+passages: 180
+memory:   {'process_rss_gb': 0.04, 'system_available_gb': 5.1, 'mlx_active_gb': 0.0, 'mlx_peak_gb': 0.0}
+network attempts blocked this run: 0
+
+=== 3. ingest: full local-Gemma re-draft of one source (offline)
+$ /usr/bin/time -l ./wiki ingest "vault/raw/Business of Energy Transition Syllabus Fall 2026.pdf" --force
+[ingest · local · mlx-community/gemma-4-e4b-it-4bit]
+Ingesting vault/raw/Business of Energy Transition Syllabus Fall 2026.pdf …
+  refreshed: vault/wiki/Coursework/Business of Energy Transition Syllabus.md
+  concepts: ['Energy Transition', 'Virtual Power Plants', 'Corporate Procurement Strategies', 'Deep Tech Underwriting']
+  passages: 39
+  pages: 14
+  seconds: 113.3
+      114.50 real        34.91 user        11.87 sys
+          1410695168  maximum resident set size
+          6280450512  peak memory footprint
+
+=== 4. ingest the whole raw folder again: must report 'already ingested', no duplicates
+
+$ ./wiki ingest ./vault/raw
+[ingest · local · mlx-community/gemma-4-e4b-it-4bit]
+Ingesting vault/raw/3A-Rail-Modernization-Program.pdf …
+  already ingested: vault/wiki/Transportation/WMATA Rail Modernization Program.md
+  seconds: 0.1
+Ingesting vault/raw/Business of Energy Transition Syllabus Fall 2026.pdf …
+  already ingested: vault/wiki/Coursework/Business of Energy Transition Syllabus.md
+  seconds: 0.1
+Ingesting vault/raw/pge-rd-strategy-report-executive-summary-2024.pdf …
+  already ingested: vault/wiki/Energy and Utilities/PG&E 2024 R&D Strategy Report.md
+  seconds: 0.1
+
+=== 5. search: original passages, no model
+
+$ ./wiki search platform screen doors safety -k 3
+[search · local · retrieval only, no language model]  “platform screen doors safety”
+
+[1] WMATA Rail Modernization Program, p. 25
+    note:     vault/wiki/Transportation/WMATA Rail Modernization Program.md
+    original: vault/raw/3A-Rail-Modernization-Program.pdf#page=25
+    score:    fused 0.0320 · cosine 0.79 · bm25 8.8
+    passage:  19 Rail Modernization Program Washington Metropolitan Area Transit Authority Platform screen doors provide stand-alone benefits and enable automated operations PSDs enhance safety, reliability, and quality of experience and are a new global standard for rail transit platform amenities Safety ▪ A physical barrier between customers and moving trains reduces risk of injury or death System Reliability ▪ This barrier prevents intrusions onto the track and limits trash and debris, preventing delays ▪ Trains can enter stations at full speed, even with crowded platforms Quality of Experience ▪ Customers feel safer on crowded platforms ▪ Peer agencies show PSD-enabled lines rate highest for customer satisfaction ▪ Additional improvements to platform air quality, energy efficiency for climate control, etc. Paris Metro: Line 4 Platform Screen Door Testing 30 of 187
+
+[2] WMATA Rail Modernization Program, p. 4
+    note:     vault/wiki/Transportation/WMATA Rail Modernization Program.md
+    original: vault/raw/3A-Rail-Modernization-Program.pdf#page=4
+    score:    fused 0.0320 · cosine 0.74 · bm25 9.2
+    passage:  Board Document While a new signaling system is required, other elements of the program (including Platform Screen Doors and automating Metro’s operations) can be pursued based on available resources and regional priorities. Each upgrade delivers immediate value while building toward a safer, more efficient, more reliable system with greater capacity. The Program Plan is organized around four core benefits: safety, reliability, capacity, and efficiency. These themes reflect the most urgent challenges facing the system and the most impactful improvements for riders. CBTC, PSDs, and full automation directly support these goals—reducing delays, increasing throughput, and improving safety for passengers and workers. Safety: Decades of global experience show automation reduces human error and enhances worker protection through precise train location data. Platform screen doors (PSDs) further improve safety by virtually eliminating track intrusions, trespassing incidents, and fatalities from persons struck by trains.
+
+[3] WMATA Rail Modernization Program, p. 24
+    note:     vault/wiki/Transportation/WMATA Rail Modernization Program.md
+    original: vault/raw/3A-Rail-Modernization-Program.pdf#page=24
+    score:    fused 0.0313 · cosine 0.70 · bm25 9.0
+    passage:  18 Washington Metropolitan Area Transit Authority Rail Modernization Program How Modernization improves safety Preventing access to the track and reducing human error in operation improves safety across the system ▪ Platform screen doors: Provide a physical barrier between customers and moving trains, preventing intrusions, falls, and suicides ▪ Modern signal systems: Reduce human error in operation, increasing worker safety, reduced need to access to the right-of-way ▪ Consistent speed and acceleration: smoother rides result in fewer on-board injuries Post-event platform crowding at Gallery Place 29 of 187
+
+(3 passages in 5.20s · no model call)
+
+=== 6. ask: standalone cited answer
+
+$ ./wiki ask What percentage of the grade is the final group presentation in the Business of Energy Transition course? --mode local
+[ask · local · mlx-community/gemma-4-e4b-it-4bit · standalone, no chat history]  “What percentage of the grade is the final group presentation in the Business of Energy Transition course?”
+
+The Final Project, which includes the Group Presentation, accounts for 50% of the grade [7].
+
+Sources:
+[7] Business of Energy Transition Syllabus, p. 4
+    note:     vault/wiki/Coursework/Business of Energy Transition Syllabus.md
+    original: vault/raw/Business of Energy Transition Syllabus Fall 2026.pdf#page=4
+    passage:  “… 20% 3 Written Class Memos (20 points) 50% Final Project -- Group Presentation (50 points) (Up to 5 bonus points can be earned) Summary of Deadlines …”
+
+(answered · 18.9s · 1906 prompt tok · 19.1 tok/s · model load 4.7s · saved to outputs/answers/2026-09-27 1715 Percentage Grade Final Group Presentation Business.md)
+
+=== 7. chat: a real session (capabilities, draft, follow-up, /ask, /exit)
+$ ./wiki chat   (typed input below)
+what can you help me with?
+Draft a three-sentence message to my study group proposing we meet Thursday at 7 to review for the energy transition memo.
+make that shorter
+/ask What is the maximum length of each written memo in the Business of Energy Transition course?
+/exit
+Loading the local model …
+[chat · local · mlx-community/gemma-4-e4b-it-4bit] Wren is ready (loaded in 4.3s). /help for commands, /exit to quit.
+
+you › wren › I can help you brainstorm, plan projects, draft and refine documents, or answer general knowledge questions. If you want to dig into your notes, I can look up specifics from your stored documents too.
+
+Want to try something? We could outline an email, or maybe you have a question about one of your reports.
+  (8.4s)
+
+you › wren › Here are a couple of options depending on the tone you want.
+
+**Option 1 (Direct):**
+Hi everyone, let's meet up this Thursday at 7 PM to go over the energy transition memo. Please review your sections beforehand so we can make the most of the time. Let me know if that time slot works for you all.
+
+**Option 2 (Slightly more casual):**
+Hey team, how about we meet this Thursday at 7 to sync up on the energy transition memo? If everyone comes prepared, we can nail down the final points quickly. Reply if Thursday at 7 works for your schedule!
+  (11.1s)
+
+you › wren › Try this:
+
+Group, let's meet Thursday at 7 PM to review the energy transition memo. Please come prepared with your sections read. Let me know if that works for everyone.
+  (15.9s)
+
+you › [ask mode · standalone, chat history not used]
+[ask · local · mlx-community/gemma-4-e4b-it-4bit · standalone, no chat history]  “What is the maximum length of each written memo in the Business of Energy Transition course?”
+
+The maximum length for each written memo is 2 pages [1]. Shorter memos are also acceptable [1].
+
+Sources:
+[1] Business of Energy Transition Syllabus, p. 3
+    note:     vault/wiki/Coursework/Business of Energy Transition Syllabus.md
+    original: vault/raw/Business of Energy Transition Syllabus Fall 2026.pdf#page=3
+    passage:  “… ● Length: Maximum of 2 pages (shorter is perfectly fine). ● Format: Memos must be written in the professional style of an investment thesis or business opportunity analysis. …”
+
+(answered · 8.1s · 1646 prompt tok · 19.5 tok/s · model load 4.3s · saved to outputs/answers/2026-09-27 1716 Maximum Length Each Written Memo Business.md)
+
+you › Chat saved to outputs/chats/2026-09-27 1716 Chat with Wren.md
+
+=== 8. full test suite (4 ask tests + mode checks), evidence written to outputs/runs/2026-09-27 1712 Offline Run
+
+$ ./wiki test
+OS network: no default route (offline)
+Loading local model …
+PASS  search: raw passages, no generation  (0.5s)  hits=5; verbatim from original page=5; paths exist=5; model calls during search=0
+PASS  ask: Test 1 Rail Capacity  (11.9s)  expected passage retrieved=True; all expected passages given to the model=True; status is answered=True; cites the expected source=True; cites every expected passage=True; answer contains ['\\b24\\b', '\\b30\\b']=True
+PASS  ask: Test 2 PG&E Problem Statements  (9.5s)  expected passage retrieved=True; all expected passages given to the model=True; status is answered=True; cites the expected source=True; cites every expected passage=True; answer contains ['(graduated|retired)[^.]{0,40}\\b17\\b|\\b17\\b[^.]{0,60}(graduated|retired)', '\\b17\\b[^.]{0,20}new|added[^.]{0,20}\\b17\\b']=True
+PASS  ask: Test 3 Final Presentation Format  (9.4s)  expected passage retrieved=True; all expected passages given to the model=True; status is answered=True; cites the expected source=True; cites every expected passage=True; answer contains ['\\b12\\b', 'slide', 'minute']=True
+PASS  ask: Test 4 Unsupported Electricity Rate  (9.3s)  status is insufficient=True; no citations shown=True
+PASS  chat: “what can we do?” explains capabilities  (7.7s)  notes searched=None; refusal=False; capability words=['draft', 'brainstorm', 'plan', 'search', 'notes']
+PASS  chat: “what can you help me with?” explains capabilities  (6.8s)  notes searched=None; refusal=False; capability words=['draft', 'brainstorm', 'plan', 'notes']
+PASS  chat: casual drafting (no forced lookup)  (5.9s)  notes searched=None
+PASS  chat: “make that shorter” uses the conversation  (4.5s)  length 134->47 chars; kept items=['laundry', 'run', 'grocer', 'read']; notes searched=None/None
+PASS  chat: conversational follow-up  (4.9s)  missing=[]; notes searched=None; history messages=6
+PASS  separation: ask ignores chat history  (10.0s)  two messages (rules + question)=True; no chat text in prompt=True; no persona in prompt=True; chat history unchanged=True; research rules used=True
+PASS  separation: chat-only claim is not ask evidence  (7.7s)  ask status=insufficient; '900' in answer=False
+PASS  chat: uses notes tool and cites when asked about notes  (21.5s)  notes searched='platform screen doors' (trigger: rule); hits=4; [n] citations in reply=True
+PASS  vault: names, H1s, links, sources, index, corrections  (0.1s)  14 notes; problems=none
+PASS  originals in raw/: unchanged and read-only  (0.0s)  3/3 match their ingest SHA-256 and are read-only
+PASS  re-ingest: no duplicates, names kept  (0.1s)  status=already ingested; notes 14->14; passages 180->180; model calls=0
+PASS  local only: no network use, no cloud fallback  (0.0s)  network attempts during tests=0; outbound probe=blocked by local-mode guard; OS network=no default route (offline)
+error: 'outputs/runs/2026-09-27 1712 Offline Run' is not in the subpath of '<project folder, redacted>'
+
+=== 9. vault check
+
+$ ./wiki check
+14 notes, 180 passages checked.
+All checks passed.
+
+=== done Sun Sep 27 17:18:56 PDT 2026 ===

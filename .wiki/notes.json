@@ -1,0 +1,294 @@
+{
+  "sources": {
+    "src-10614dc760a7": {
+      "title": "WMATA Rail Modernization Program",
+      "folder": "Transportation",
+      "aliases": [],
+      "summary": "This document presents the Rail Modernization Program, a strategic plan by the Washington Metropolitan Area Transit Authority (WMATA) to address aging infrastructure and increasing regional demand. The program focuses on modernizing the system through incremental investments to enhance safety, reliability, capacity, and efficiency.",
+      "key_points": [
+        {
+          "point": "The current system faces capacity constraints, especially on the Blue/Orange/Silver corridor, compounded by terminal limitations and fleet flexibility issues.",
+          "page": 3
+        },
+        {
+          "point": "The program is organized around four core benefits: safety, reliability, capacity, and efficiency.",
+          "page": 4
+        },
+        {
+          "point": "Modernization elements include signals, fleet, stations/platforms, and operations, with signals being the foundation for further investments.",
+          "page": 11
+        },
+        {
+          "point": "Communications-Based Train Control (CBTC) is the modern signal system that provides the foundation for modernization.",
+          "page": 18
+        },
+        {
+          "point": "The migration strategy involves phasing modernization, starting with the Red Line due to its self-contained infrastructure footprint.",
+          "page": 40
+        },
+        {
+          "point": "Full automation, including CBTC and Platform Screen Doors (PSDs), can reduce marginal operating costs by up to 41%.",
+          "page": 28
+        },
+        {
+          "point": "Federal Capital Investment Grants could potentially cover 40% of the capital costs for modernization projects.",
+          "page": 60
+        }
+      ],
+      "concepts": [
+        "c-communications-based-train-control",
+        "c-platform-screen-doors",
+        "c-grade-of-automation"
+      ],
+      "original": "raw/3A-Rail-Modernization-Program.pdf",
+      "original_path": "~/Downloads/3A-Rail-Modernization-Program.pdf",
+      "sha256": "10614dc760a7a69546ea063f66a3024c74d3944661c8b84a3882a1f605df641a",
+      "pages": 73,
+      "ingested": "2026-09-26"
+    },
+    "src-76ab9f0b7f03": {
+      "title": "PG&E 2024 R&D Strategy Report",
+      "folder": "Energy and Utilities",
+      "aliases": [],
+      "summary": "This document is the Executive Summary of PG&E’s 2024 R&D Strategy Report, which outlines the company's approach to building a net zero and climate-resilient energy system. The strategy centers on leveraging Artificial Intelligence (AI) to address critical operational and environmental challenges across both electric and gas systems.",
+      "key_points": [
+        {
+          "point": "The 2024 strategy builds upon 67 problem statements identified to achieve the True North Strategy (TNS).",
+          "page": 3
+        },
+        {
+          "point": "PG&E has graduated 17 original problem statements from 2023 and added 17 new problem statements in 2024.",
+          "page": 5
+        },
+        {
+          "point": "The company is committed to enabling the widespread adoption of EVs with a target of 3 million connected EVs by 2030.",
+          "page": 7
+        },
+        {
+          "point": "AI is being explored to help stabilize customer bills by optimizing operations and improving resource allocation.",
+          "page": 4
+        },
+        {
+          "point": "PG&E aims to achieve a net zero energy system by 2040, five years ahead of the California mandate, through its gas operations.",
+          "page": 16
+        },
+        {
+          "point": "The company has committed to cutting methane emissions by 45% by 2030 through enhanced leak detection and mitigation.",
+          "page": 20
+        },
+        {
+          "point": "The report emphasizes a multi-faceted approach using diverse technologies and partnerships to overcome obstacles.",
+          "page": 6
+        }
+      ],
+      "concepts": [
+        "c-true-north-strategy",
+        "c-artificial-intelligence",
+        "c-climate-resilience",
+        "c-distributed-energy-resources"
+      ],
+      "original": "raw/pge-rd-strategy-report-executive-summary-2024.pdf",
+      "original_path": "~/Downloads/pge-rd-strategy-report-executive-summary-2024.pdf",
+      "sha256": "76ab9f0b7f031bd11d261f95910787fc1b52a14e3e7250e4db12208fc329c15a",
+      "pages": 21,
+      "ingested": "2026-09-26"
+    },
+    "src-ff8a0aca1e36": {
+      "title": "Business of Energy Transition Syllabus",
+      "folder": "Coursework",
+      "aliases": [],
+      "summary": "This syllabus outlines the 'Business of Energy Transition' course, which examines the massive capital reallocation occurring during the shift to a low-carbon energy system. The course uses a three-phase structure—landscape, toolkit, and frontier—to equip MBA students with the knowledge to identify and capitalize on investment opportunities in the clean energy sector.",
+      "key_points": [
+        {
+          "point": "The course is structured in three phases: the landscape, the toolkit, and the frontier, covering the current state, sector-specific solutions, and future possibilities of the energy transition.",
+          "page": 2
+        },
+        {
+          "point": "Student group projects require a 12-slide presentation lasting 12 minutes, followed by an 8-minute Q&A, pitching a business or investment thesis.",
+          "page": 3
+        },
+        {
+          "point": "The course emphasizes that the energy transition is fundamentally a financing problem requiring a reinvention of the entire financial system.",
+          "page": 6
+        },
+        {
+          "point": "Students must submit three written memos throughout the semester, each up to two pages long, to demonstrate critical engagement with course material.",
+          "page": 3
+        },
+        {
+          "point": "The curriculum covers topics ranging from utility-scale power systems and Distributed Energy Resources (DERs) to the role of AI and data centers in energy demand.",
+          "page": 9
+        },
+        {
+          "point": "The final frontier phase addresses high-CAPEX technologies like Direct Air Capture and green hydrogen, requiring venture capital to bridge the 'valley of death'.",
+          "page": 14
+        }
+      ],
+      "concepts": [
+        "c-energy-transition",
+        "c-virtual-power-plants",
+        "c-corporate-procurement-strategies",
+        "c-deep-tech-underwriting"
+      ],
+      "original": "raw/Business of Energy Transition Syllabus Fall 2026.pdf",
+      "original_path": "~/Downloads/Business of Energy Transition Syllabus Fall 2026.pdf",
+      "sha256": "ff8a0aca1e368983c75f68d2a3f5f3cc1d5fc72eb54bd93ca6d81fc95b148fcb",
+      "pages": 14,
+      "ingested": "2026-09-27"
+    }
+  },
+  "concepts": {
+    "c-communications-based-train-control": {
+      "title": "Communications-Based Train Control",
+      "folder": "Transportation",
+      "aliases": [
+        "CBTC"
+      ],
+      "mentions": {
+        "src-10614dc760a7": {
+          "definition": "CBTC is a modern signal system that uses advanced communications technology to control train operations, offering significant improvements over legacy systems.",
+          "page": 3
+        }
+      }
+    },
+    "c-platform-screen-doors": {
+      "title": "Platform Screen Doors",
+      "folder": "Transportation",
+      "aliases": [
+        "PSDs"
+      ],
+      "mentions": {
+        "src-10614dc760a7": {
+          "definition": "PSDs are physical barriers between customers and moving trains that enhance safety by preventing intrusions onto the track and reducing operational risks.",
+          "page": 25
+        }
+      }
+    },
+    "c-grade-of-automation": {
+      "title": "Grade of Automation",
+      "folder": "Transportation",
+      "aliases": [
+        "GoA"
+      ],
+      "mentions": {
+        "src-10614dc760a7": {
+          "definition": "GoA is an international standard describing the roles and responsibilities of train control systems and on-board staff during train operation.",
+          "page": 12
+        }
+      }
+    },
+    "c-true-north-strategy": {
+      "title": "True North Strategy",
+      "folder": "Energy and Utilities",
+      "aliases": [
+        "TNS"
+      ],
+      "mentions": {
+        "src-76ab9f0b7f03": {
+          "definition": "TNS is PG&E’s 10-year enterprise transformation roadmap guiding the company toward a net zero emissions, climate-resilient future for California.",
+          "page": 2
+        }
+      }
+    },
+    "c-artificial-intelligence": {
+      "title": "Artificial Intelligence",
+      "folder": "Technology",
+      "aliases": [
+        "AI"
+      ],
+      "mentions": {
+        "src-76ab9f0b7f03": {
+          "definition": "AI is viewed as a transformative tool to accelerate progress by enhancing predictive capabilities, automating processes, and optimizing complex energy system operations.",
+          "page": 2
+        }
+      }
+    },
+    "c-climate-resilience": {
+      "title": "Climate Resilience",
+      "folder": "Energy and Utilities",
+      "aliases": [],
+      "mentions": {
+        "src-76ab9f0b7f03": {
+          "definition": "This concept involves the ability of the energy system to anticipate, absorb, recover, and learn from hazards driven by climate change, such as extreme weather and wildfires.",
+          "page": 18
+        }
+      }
+    },
+    "c-distributed-energy-resources": {
+      "title": "Distributed Energy Resources",
+      "folder": "Energy and Utilities",
+      "aliases": [
+        "DERs"
+      ],
+      "mentions": {
+        "src-76ab9f0b7f03": {
+          "definition": "DERs are decentralized energy assets, like solar and wind, whose proliferation requires active management by PG&E to balance supply and demand on the grid.",
+          "page": 11
+        }
+      }
+    },
+    "c-energy-transition": {
+      "title": "Energy Transition",
+      "folder": "Energy and Utilities",
+      "aliases": [],
+      "mentions": {
+        "src-ff8a0aca1e36": {
+          "definition": "The largest capital reallocation in human history, involving a shift from a centralized, carbon-based system to a decentralized, carbon-free energy system.",
+          "page": 6
+        }
+      }
+    },
+    "c-virtual-power-plants": {
+      "title": "Virtual Power Plants",
+      "folder": "Energy and Utilities",
+      "aliases": [
+        "VPPs"
+      ],
+      "mentions": {
+        "src-ff8a0aca1e36": {
+          "definition": "A dynamic network of active participants utilizing Distributed Energy Resources (DERs) to aggregate and monetize flexible generation and demand at the grid edge.",
+          "page": 9
+        }
+      }
+    },
+    "c-corporate-procurement-strategies": {
+      "title": "Corporate Procurement Strategies",
+      "folder": "Climate Finance",
+      "aliases": [],
+      "mentions": {
+        "src-ff8a0aca1e36": {
+          "definition": "The business logic behind major corporations driving renewable energy demand through mechanisms like Power Purchase Agreements (PPAs) and Renewable Energy Certificates (RECs).",
+          "page": 13
+        }
+      }
+    },
+    "c-deep-tech-underwriting": {
+      "title": "Deep Tech Underwriting",
+      "folder": "Climate Finance",
+      "aliases": [],
+      "mentions": {
+        "src-ff8a0aca1e36": {
+          "definition": "The process where venture capital firms assess and provide capital for uncommercialized, high-CAPEX technologies like DAC and SMRs.",
+          "page": 14
+        }
+      }
+    }
+  },
+  "links": [
+    {
+      "a": "c-distributed-energy-resources",
+      "b": "c-virtual-power-plants",
+      "why": "DERs are distributed assets that can be utilized by Virtual Power Plants, which aggregate and monetize flexible generation and demand at the grid edge."
+    },
+    {
+      "a": "c-artificial-intelligence",
+      "b": "c-energy-transition",
+      "why": "AI is a transformative tool that can accelerate the Energy Transition by optimizing complex energy system operations."
+    },
+    {
+      "a": "c-true-north-strategy",
+      "b": "c-virtual-power-plants",
+      "why": "TNS is a roadmap toward a net zero future, and Virtual Power Plants are a dynamic network utilizing DERs that contributes to this future."
+    }
+  ]
+}

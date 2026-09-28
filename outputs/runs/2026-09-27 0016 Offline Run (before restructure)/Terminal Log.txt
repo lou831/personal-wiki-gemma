@@ -1,0 +1,101 @@
+=== Offline run Sun Sep 27 00:16:23 PDT 2026 ===
+--- OS network check
+Wi-Fi Power (en0): Off
+route: writing to routing socket: not in table
+note: a default route is still present via 
+offline confirmed: huggingface.co, google.com and pypi.org are all unreachable
+
+--- 1. fresh CLI start: help
+wiki — personal wiki on a local Gemma model (fully offline)
+
+MODES
+
+--- 2. stats before ingest
+sources:  2
+  - Transportation/WMATA Rail Modernization Program  (73 pages, from Originals/3A-Rail-Modernization-Program.pdf)
+  - Energy and Utilities/PG&E 2024 R&D Strategy Report  (21 pages, from Originals/pge-rd-strategy-report-executive-summary-2024.pdf)
+concepts: 7
+notes:    9 (+ index.md)
+passages: 141
+memory:   {'process_rss_gb': 0.04, 'system_available_gb': 5.5, 'mlx_active_gb': 0.0, 'mlx_peak_gb': 0.0}
+network attempts blocked this run: 0
+
+--- 3. ingest a new source (offline)
+Ingesting ~/Downloads/Business of Energy Transition Syllabus Fall 2026.pdf …
+  ingested: vault/General/Business of Energy Transition Syllabus.md
+  concepts: ['Energy Transition', 'Virtual Power Plants', 'Corporate Procurement Strategies', 'Deep Tech Underwriting']
+  passages: 39
+  pages: 14
+  seconds: 83.4
+       84.41 real        25.37 user         9.31 sys
+          1541881856  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              453321  page reclaims
+               12173  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                7311  voluntary context switches
+              195512  involuntary context switches
+        124259281758  instructions retired
+         58428162935  cycles elapsed
+          6279123312  peak memory footprint
+
+--- 4. search (no model)
+
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 199/199 [00:00<00:00, 10562.19it/s]
+[1] Business of Energy Transition Syllabus, p. 3
+    note:     vault/General/Business of Energy Transition Syllabus.md
+    original: vault/Originals/Business of Energy Transition Syllabus Fall 2026.pdf#page=3
+    score:    fused 0.0328 · cosine 0.72 · bm25 17.9
+    passage:  Students will form groups of 4 to 5 members (subject to minor adjustments based on final enrollment) to develop and deliver a professional investment or business thesis tied to the energy transition. Imagine your team is pitching to an investment committee at a financial firm. Your goal is to make a compelling case for investing in or developing a specific category or sector within the energy transition space. Note: Your presentation should focus on the broader sector or category opportunity, rather than pitching a single, specific company or startup. Deliverables & Timing ● Format: A 12-slide presentation. ● Duration: 12 minutes for the presentation, followed by an 8-minute Q&A session with the committee (20 minutes total per group). ● Participation: All group members are expected to contribute equally to the conceptual development and participate equally during the oral presentation. Your presentation must explicitly address the following five elements: 1.
+
+[2] Business of Energy Transition Syllabus, p. 5
+    note:     vault/General/Business of Energy Transition Syllabus.md
+    original: vault/Originals/Business of Energy Transition Syllabus Fall 2026.pdf#page=5
+    score:    fused 0.0320 · cosine 0.66 · bm25 11.4
+    passage:  Written Memos: ● Wednesday, September 16, 2026 - Memo 1 is due ● Wednesday, October 14, 2026 - Memo 2 is due ● Wednesday, November 4 - Memo 3 is due Final Project: ● Thursday, November 4: Notify instructors of team formation and tentative topic ● Thursday, Nov. 12: Sign up for your preferred date (Dec 3 or 10) ● Thursday, Dec 3: All final slide decks due prior to the start of class ● Thursday, Dec. 3: Final Presentations ● Thursday, Dec. 10: Final Presentations Prerequisites and Class Participants No prior background in energy, engineering, or finance is required. Class Format & Materials Some lecture, discussion, guest speakers. Will include a mix of written memos, in-class debates, and a final group presentation. Students are required to read / watch / listen to the items listed under “Materials.” Items listed as “Recommended” are optional, and included for students who are interested in taking a deeper dive into particular subjects.
+
+(2 passages in 5.01s · no model call)
+
+--- 5. ask (from the new source)
+The Final Project, which is the Group Presentation, accounts for 50% of the grade [4].
+
+Sources:
+[4] Business of Energy Transition Syllabus, p. 4
+    note:     vault/General/Business of Energy Transition Syllabus.md
+    original: vault/Originals/Business of Energy Transition Syllabus Fall 2026.pdf#page=4
+    passage:  “… 20% 3 Written Class Memos (20 points) 50% Final Project -- Group Presentation (50 points) (Up to 5 bonus points can be earned) Summary of Deadlines …”
+
+(answered · 16.2s · 1352 prompt tok · 19.7 tok/s · model load 4.4s · saved to outputs/answers/2026-09-27 0018 Percentage Grade Final Group Presentation Business.md)
+
+--- 6. full test suite
+OS network: no default route (offline)
+Loading local model …
+PASS  search: raw passages, no generation  (0.5s)  hits=5; verbatim from original page=5; paths exist=5; model calls during search=0
+PASS  ask: Q1 rail capacity  (11.0s)  status=answered; cited files=['3A-Rail-Modernization-Program.pdf']; missing patterns=[]
+PASS  ask: Q2 PG&E problem statements  (8.4s)  status=answered; cited files=['pge-rd-strategy-report-executive-summary-2024.pdf']; missing patterns=[]
+PASS  ask: Q3 course final presentation  (7.5s)  status=answered; cited files=['Business of Energy Transition Syllabus Fall 2026.pdf']; missing patterns=[]
+PASS  ask: Q4 unsupported  (8.9s)  status=insufficient; reason=model reported insufficient evidence
+PASS  chat: casual drafting (no forced lookup)  (7.4s)  notes searched=None
+PASS  chat: conversational follow-up  (3.9s)  missing=[]; notes searched=None; history messages=6
+PASS  separation: ask ignores chat history  (9.9s)  two messages (rules + question)=True; no chat content in prompt=True; no persona in prompt=True; chat history unchanged=True; research rules used=True
+PASS  chat: uses notes tool when asked about notes  (18.6s)  notes searched='platform screen doors'; hits=4
+PASS  vault: names, H1s, links, originals, index  (0.0s)  14 notes; problems=none
+PASS  originals: unchanged and read-only  (0.0s)  3/3 originals match their ingest hash and are read-only
+PASS  re-ingest: no duplicates, names kept  (0.0s)  status=already ingested; notes 14->14; passages 180->180; model calls=0
+PASS  local only: no network use, no cloud fallback  (0.0s)  network attempts during tests=0; outbound probe=blocked by local-mode guard; OS network=no default route (offline)
+
+13/13 passed · report: outputs/tests/2026-09-27 0027 Test Report.md
+
+--- 7. vault check
+14 notes, 180 passages checked.
+All checks passed.
+
+=== done Sun Sep 27 00:27:21 PDT 2026 ===

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# macOS / Google Drive
+.DS_Store
+Icon?
+
+# Obsidian per-user state (keep the vault content, not the window layout)
+vault/.obsidian/workspace*.json
+vault/.obsidian/cache
+
+# Backups duplicate the vault (including the PDFs); keep them local
+.wiki/backups/
+
+# Model weights never go in the repo (downloaded from Hugging Face, see README)
+*.safetensors
+*.gguf

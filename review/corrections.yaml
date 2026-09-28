@@ -1,0 +1,98 @@
+# Reviewer corrections, applied every time notes are rendered.
+#
+# The model's drafts stay untouched in .wiki/notes.json; these fixes are replayed
+# on top of them, so re-ingesting a source cannot bring a corrected error back.
+# Each entry was checked against the original page (see `reason`). The original
+# sources in vault/raw/ are never edited.
+#
+#   field: summary    -> replace the `match` text inside the summary with `text`
+#   field: key_point  -> the key point containing `match` becomes `text` (and/or `page`)
+#   field: definition -> the concept definition containing `match` becomes `text` / `page`
+
+reviewed:
+  src-10614dc760a7: 2026-09-27   # WMATA Rail Modernization Program + its concepts
+  src-76ab9f0b7f03: 2026-09-27   # PG&E 2024 R&D Strategy Report + its concepts
+  src-ff8a0aca1e36: 2026-09-27   # Business of Energy Transition Syllabus + its concepts
+
+corrections:
+  # --- WMATA Rail Modernization Program ------------------------------------------
+  - id: src-10614dc760a7
+    field: key_point
+    match: "reduce marginal operating costs by up to 41%"
+    text: "Full automation would reduce marginal operating costs by up to 41%, and CBTC alone could cut traction power expenses by up to 15%."
+    page: 28
+    reason: "Draft said the 41% applies to automation 'including CBTC and Platform Screen Doors'; p. 28 attributes it to full automation only and gives 15% for CBTC."
+  - id: src-10614dc760a7
+    field: key_point
+    match: "Federal Capital Investment Grants could potentially cover 40%"
+    text: "Based on peer agencies, Metro assumes federal grants can cover 40% of the capital costs of modernization, and sees the Capital Investment Grant program as a good match."
+    page: 60
+    reason: "Draft stated it as a possibility of CIG specifically; p. 60 states it as Metro's planning assumption for federal grants."
+  - id: c-communications-based-train-control
+    field: definition
+    match: "CBTC is a modern signal system"
+    text: "CBTC is the modern signal system that uses advanced communications technology in place of legacy track circuits; it is the foundation for platform screen doors and automated operation."
+    page: 19
+    reason: "Draft cited p. 3; the description of CBTC versus the legacy system is on p. 19 (foundation role on p. 18)."
+
+  # --- PG&E 2024 R&D Strategy Report ----------------------------------------------
+  - id: src-76ab9f0b7f03
+    field: key_point
+    match: "net zero energy system by 2040"
+    text: "As part of its Climate Strategy, PG&E aims to achieve a net zero energy system by 2040, five years ahead of California's mandate."
+    page: 16
+    reason: "Draft said the goal would be achieved 'through its gas operations'; p. 16 presents it as a company-wide Climate Strategy goal in the gas section."
+  - id: c-distributed-energy-resources
+    field: definition
+    match: "DERs are decentralized energy assets"
+    text: "DERs are distributed assets on PG&E's grid that the utility wants to actively orchestrate in real time to balance supply and demand, reduce infrastructure costs and improve efficiency."
+    page: 11
+    reason: "Draft added 'like solar and wind', which p. 11 does not say."
+
+  # --- Business of Energy Transition Syllabus ---------------------------------------
+  - id: src-ff8a0aca1e36
+    field: key_point
+    match: "three written memos"
+    text: "Students submit three written memos, one per third of the term, each at most two pages and written in the professional style of an investment thesis or business opportunity analysis."
+    page: 3
+    reason: "Draft said memos 'demonstrate critical engagement', which the syllabus does not say; p. 3 specifies the format and timing."
+  - id: src-ff8a0aca1e36
+    field: key_point
+    match: "The curriculum covers topics"
+    text: "The toolkit weeks cover utility-scale power (Week 4), the grid edge with DERs and virtual power plants (Week 5), buildings (Week 6), finance (Week 8), and AI and data centers (Week 9)."
+    page: 8
+    reason: "Re-draft (2026-09-27, after the folder list in the note-writer prompt changed) cited p. 9 for topics that span pp. 8-11; rewritten with the week numbers. (The first draft's version of this point, cited to p. 2, was corrected the same way.)"
+  - id: src-ff8a0aca1e36
+    field: key_point
+    match: "fundamentally a financing problem"
+    text: "Week 8 frames the energy transition as, at its core, a financing problem: shifting from fuel-based operating expenses to capital investment and from centralized to decentralized energy means reinventing the financing system for energy."
+    page: 10
+    reason: "Re-draft cited p. 6 and said 'the entire financial system'; the passage is on pp. 10-11 and says 'the entire financing system for energy'."
+  - id: c-energy-transition
+    field: definition
+    match: "The largest capital reallocation in human history"
+    text: "The course frames the energy transition as a reallocation of capital from fuel-based operating expenses to technology-based capital investment, a shift from a centralized to a decentralized system, and a move from carbon-based to carbon-free energy."
+    page: 6
+    reason: "Draft blended the p. 2 tagline with the p. 6 definition; rewritten to the three-part framing on p. 6."
+
+# --- Concept links (proposed by local Gemma in `wiki link`, reviewed here) ----------------
+# Rejected pairs ("Concept A | Concept B"): the reason was wrong or speculative.
+rejected_links:
+  - "Artificial Intelligence | Virtual Power Plants"      # claimed VPPs *are* AI
+  - "Climate Resilience | Virtual Power Plants"           # speculative, not in either definition
+  - "Climate Resilience | Energy Transition"              # reason states no actual relationship
+
+# Kept pairs whose reason needed rewriting.
+link_reasons:
+  "Distributed Energy Resources | Virtual Power Plants": >-
+    Virtual power plants aggregate distributed energy resources into one coordinated
+    resource, which is the real-time DER orchestration the PG&E report calls for
+    (syllabus p. 9, PG&E p. 11).
+
+# Reviewer-added links the linker did not propose.
+added_links:
+  - a: Energy Transition
+    b: True North Strategy
+    why: >-
+      PG&E's True North Strategy is one utility's 10-year roadmap toward the net zero,
+      decentralized system that the course frames as the energy transition.

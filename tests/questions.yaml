@@ -1,0 +1,77 @@
+# Assignment test set (kept outside the vault so retrieval can never find the answer key).
+#
+# Ask tests: `evidence` is a verbatim snippet of the passage that should be retrieved
+# and cited (whitespace-normalized), `page` its page in the original, `expect` regexes
+# the answer must contain. Written before running the harness.
+
+ask:
+  - id: 1
+    name: Rail Capacity
+    kind: direct question, one source
+    question: "According to Metro's Rail Modernization Program, how many trains per hour could automation raise practical capacity to?"
+    source: 3A-Rail-Modernization-Program.pdf
+    page: 4
+    evidence: "raise practical capacity limits from 24 to 30 trains per hour or more"
+    expect: ["\\b24\\b", "\\b30\\b"]
+    expected_behavior: "Answers 30 or more trains per hour (up from 24), citing p. 4 of the rail plan."
+
+  - id: 2
+    name: PG&E Problem Statements
+    kind: paraphrased question (wording differs from the source)
+    question: "How many of PG&E's research challenges from last year were retired as solved, and how many fresh ones joined the list?"
+    source: pge-rd-strategy-report-executive-summary-2024.pdf
+    page: 5
+    evidence: "we have “graduated” 17 original problem statements"
+    evidence_2: "we added 17 new problem statements"
+    expect: ["(graduated|retired)[^.]{0,40}\\b17\\b|\\b17\\b[^.]{0,60}(graduated|retired)", "\\b17\\b[^.]{0,20}new|added[^.]{0,20}\\b17\\b"]
+    expected_behavior: "Retrieves p. 5 despite 'retired as solved' vs 'graduated'; answers 17 graduated AND 17 new problem statements."
+
+  - id: 3
+    name: Final Presentation Format
+    kind: known evidence, source ingested offline
+    question: "In the Business of Energy Transition course, how many slides and how many minutes are allowed for the final group presentation?"
+    source: Business of Energy Transition Syllabus Fall 2026.pdf
+    page: 3
+    evidence: "Format: A 12-slide presentation"
+    expect: ["\\b12\\b", "slide", "minute"]
+    expected_behavior: "Answers 12 slides, 12 minutes plus an 8-minute Q&A, citing p. 3 of the syllabus."
+
+  - id: 4
+    name: Unsupported Electricity Rate
+    kind: plausible but unanswerable
+    question: "What residential electricity rate in cents per kWh does PG&E charge in 2024?"
+    unsupported: true
+    expected_behavior: "Explicit insufficient-evidence response; no rate is invented. The PG&E report discusses bills and affordability but gives no rate."
+
+modes:
+  capabilities: ["what can we do?", "what can you help me with?"]
+  capability_words: ["draft", "brainstorm", "plan", "search", "notes", "ask", "wiki"]
+
+  casual:
+    message: "Hi Wren! Can you draft a two-sentence thank-you message to my study group for helping me prep for midterms?"
+    expect: ["thank"]
+
+  draft_then_shorten:
+    draft: "Draft a four-step plan for my Saturday: laundry, a 5k run, grocery shopping, and finishing a reading for class."
+    followup: "make that shorter"
+    expect_any: ["laundry", "run", "grocer", "read"]
+
+  followup:
+    turns:
+      - "My sister and I are taking a train trip to Lisbon next month."
+      - "Give me three quick packing tips for that trip."
+    followup: "Remind me: which city are we going to, and who am I going with?"
+    expect: ["Lisbon", "sister"]
+
+  notes_tool:
+    message: "What do my notes say about platform screen doors?"
+
+  chat_claim_not_evidence:
+    chat: "Fun fact to remember for later: PG&E's 2024 R&D budget was $900 million."
+    ask: "What was PG&E's 2024 R&D budget?"
+
+  search:
+    query: "Capital Investment Grant federal funding"
+
+  reingest:
+    file: 3A-Rail-Modernization-Program.pdf   # re-ingested from vault/raw
